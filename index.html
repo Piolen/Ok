@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Świąteczne losowanie prezentu</title>
+  <style>
+    body {
+      background-color: #f0f0f0;
+      color: #333;
+      font-family: 'Pacifico', cursive;
+    }
+
+    h2, label, p {
+      color: #333;
+      text-transform: capitalize;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: #fff;
+      padding: 10px;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap">
+</head>
+<body>
+
+  <h2>Świąteczne losowanie prezentu</h2>
+
+  <form id="formularz">
+    <label for="imie">Twoje imię:</label>
+    <input type="text" id="imie">
+    <button type="button" onclick="losujPrezent()" id="guzikLosowania">Wylosuj prezent</button>
+    <p id="wynik"></p>
+  </form>
+
+  <script>
+    var imiona = ['Kasia', 'Karol', 'Gosia', 'Ola', 'Piotrek', 'Carlo', 'Karolina', 'Agnieszka', 'Mateusz', 'Wojtek'];
+    var osobyPrzypisane = JSON.parse(localStorage.getItem('osobyPrzypisane')) || {};
+    var guzikJuzKlikniety = false;
+
+    function losujPrezent() {
+      if (guzikJuzKlikniety) {
+        alert('Trzeba było być grzecznym, teraz musisz mi kupić dwa prezenty.');
+        return;
+      }
+
+      var twojeImie = document.getElementById('imie').value.toLowerCase();
+
+      if (osobyPrzypisane[twojeImie]) {
+        alert('Już zostałeś/łaś przypisany/a do osoby: ' + osobyPrzypisane[twojeImie]);
+        return;
+      }
+
+      // Losowanie indeksu
+      var losowyIndex;
+
+      do {
+        losowyIndex = Math.floor(Math.random() * imiona.length);
+      } while (imiona[losowyIndex] === twojeImie);
+
+      // Wybranie osoby
+      var osobaWylosowana = imiona[losowyIndex];
+
+      // Przypisanie osoby do osoby wylosowanej
+      osobyPrzypisane[twojeImie] = osobaWylosowana;
+
+      // Zapisanie przypisania w local storage
+      localStorage.setItem('osobyPrzypisane', JSON.stringify(osobyPrzypisane));
+
+      // Wyświetlenie wyniku
+      document.getElementById('wynik').innerText = 'Przypisana osoba dla ' + twojeImie + ' to: ' + osobaWylosowana;
+
+      // Zablokowanie ponownego kliknięcia
+      guzikJuzKlikniety = true;
+
+      // Zablokowanie edycji pola imienia
+      document.getElementById('imie').disabled = true;
+    }
+  </script>
+
+</body>
+</html>
